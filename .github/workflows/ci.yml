@@ -88,11 +88,12 @@ jobs:
           cloc src/ > cloc-report.txt
           cat cloc-report.txt
 
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=your_project_key
-            -Dsonar.organization=your_organization
+      # Запуск SonarQube analysis через sonar-scanner 
+      - name: Run SonarQube analysis 
+        env: 
+          SONAR_TOKEN: sqp_cc2f07b5e9d3cddcc64e33737314845b3e21f254
+        run: | 
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip 
+          unzip sonar-scanner-cli-4.8.0.2856-linux.zip 
+          export PATH=$PATH:$(pwd)/sonar-scanner-4.8.0.2856-linux/bin 
+          sonar-scanner
