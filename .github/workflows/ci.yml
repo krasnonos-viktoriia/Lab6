@@ -1,0 +1,79 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, review_requested, submitted]
+    branches:
+      - develop
+
+jobs:
+  # Job для перевірки якості коду (лінтинг, тести)
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'  # кешування залежностей, якщо є package-lock.json
+
+      # Встановлюємо залежності тільки якщо є package.json
+      - name: Install dependencies
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+          else
+            echo "No package.json found, skipping dependency installation."
+          fi
+
+      # Лінтинг JavaScript (якщо є конфіг ESLint)
+      - name: Lint JavaScript
+        run: |
+          if [ -f .eslintrc* ] || grep -q '"eslint"' package.json 2>/dev/null; then
+            npx eslint . --ext .js --max-warnings 0
+          else
+            echo "ESLint not configured, skipping JS linting."
+          fi
+
+      # Лінтинг CSS (якщо є конфіг Stylelint)
+      - name: Lint CSS
+        run: |
+          if [ -f .stylelintrc* ] || grep -q '"stylelint"' package.json 2>/dev/null; then
+            npx stylelint "**/*.css"
+          else
+            echo "Stylelint not configured, skipping CSS linting."
+          fi
+
+      # Запуск тестів (якщо є скрипт test у package.json)
+      - name: Run tests
+        run: |
+          if [ -f package.json ] && grep -q '"test"' package.json; then
+            npm test
+          else
+            echo "No test script found, skipping tests."
+          fi
+
+  # Job для статичного аналізу (SonarQube)
+  analysis:
+    runs-on: ubuntu-latest
+    needs: test  # виконується тільки після успішного завершення test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # необхідно для повного аналізу SonarQube
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          # Якщо використовується SonarCloud, додайте:
+          # SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          args: >
+            -Dsonar.projectKey=your_project_key
+            -Dsonar.organization=your_organization
+            # Решта параметрів будуть взяті з sonar-project.properties
