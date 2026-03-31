@@ -127,7 +127,13 @@ jobs:
           else 
             echo "No src directory found, skipping cloc." 
           fi 
- 
+          
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Run SonarQube analysis 
         continue-on-error: true
         env: 
