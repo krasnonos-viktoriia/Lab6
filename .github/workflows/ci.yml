@@ -141,13 +141,20 @@ jobs:
             -e SONAR_FORCEAUTHENTICATION=false \
             sonarqube:community
           
-          echo "Waiting for SonarQube to start..."
-          # Даем серверу время прогрузиться (минимум 60-90 сек)
-          until $(curl --output /dev/null --silent --head --fail http://localhost:9000); do
-            printf '.'
-            sleep 5
+          echo "Waiting for SonarQube API to be ready..."
+          MAX_RETRIES=30
+          COUNT=0
+          until [ "$COUNT" -ge "$MAX_RETRIES" ] || $(curl --output /dev/null --silent --head --fail http://localhost:9000/api/system/status); do
+            echo "Waiting for SonarQube... ($COUNT/$MAX_RETRIES)"
+            sleep 10
+            COUNT=$((COUNT+1))
           done
-          echo "SonarQube is up!"
+          
+          if [ "$COUNT" -ge "$MAX_RETRIES" ]; then
+            echo "SonarQube failed to start in time"
+            exit 1
+          fi
+          echo "SonarQube is ready!"
 
       - name: Run SonarQube analysis 
         continue-on-error: true
