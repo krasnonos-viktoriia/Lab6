@@ -97,6 +97,9 @@ jobs:
           if [ -f package.json ]; then 
             npm install 
           fi 
+
+      - name: Add node_modules to PATH
+        run: echo "$(pwd)/node_modules/.bin" >> $GITHUB_PATH
  
       - name: Run ESLint with Reviewdog 
         uses: reviewdog/action-eslint@v1 
