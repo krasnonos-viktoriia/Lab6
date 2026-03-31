@@ -127,9 +127,9 @@ jobs:
           else 
             echo "No src directory found, skipping cloc." 
           fi 
-          
+
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4 # Обновили до v4 для стабильности
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -139,9 +139,11 @@ jobs:
         env: 
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
         run: | 
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip 
-          unzip -o sonar-scanner-cli-4.8.0.2856-linux.zip 
-          export PATH=$PATH:$(pwd)/sonar-scanner-4.8.0.2856-linux/bin 
- 
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip 
+          unzip -o sonar-scanner-cli-5.0.1.3006-linux.zip 
+          
+          export PATH=$(pwd)/sonar-scanner-5.0.1.3006-linux/bin:$PATH
+          export JAVA_HOME=$JAVA_HOME_17_X64
+          
           sonar-scanner \ 
             -Dsonar.login=$SONAR_TOKEN
