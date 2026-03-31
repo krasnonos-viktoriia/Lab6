@@ -4,9 +4,17 @@ module.exports = [
     languageOptions: {
       sourceType: "commonjs",
       globals: {
-        console: "readonly",
         window: "readonly",
-        document: "readonly"
+        document: "readonly",
+        localStorage: "readonly",
+        alert: "readonly",
+        console: "readonly",
+        describe: "readonly",
+        test: "readonly",
+        expect: "readonly",
+        beforeEach: "readonly",
+        jest: "readonly",
+        it: "readonly"
       }
     },
     rules: {
