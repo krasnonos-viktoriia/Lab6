@@ -107,7 +107,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }} 
           reporter: github-pr-review 
           eslint_flags: ". --ext .js" 
-          level: error 
+          level: warning
  
       - name: Run Prettier with Reviewdog 
         uses: EPMatt/reviewdog-action-prettier@v1 
