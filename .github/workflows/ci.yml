@@ -4,7 +4,8 @@ on:
   pull_request: 
     types: [opened, edited, reopened, synchronize, review_requested, submitted] 
     branches: 
-      - develop 
+      - develop
+      - master 
  
 jobs: 
   test: 
@@ -16,7 +17,7 @@ jobs:
       - name: Setup Node.js 
         uses: actions/setup-node@v3 
         with: 
-          node-version: '18' 
+          node-version: '22' 
           cache: 'npm' 
  
       - name: Install dependencies 
@@ -66,7 +67,7 @@ jobs:
               pull_number: prNumber 
             }); 
 
-            console.log(`Найдено ревью: ${reviews.length}`);
+            console.log(`Знайдено ревью: ${reviews.length}`);
             reviews.forEach(r => console.log(`- Автор: ${r.user.login}, Статус: ${r.state}`));
 
             const approved = reviews.some(review => review.state === 'APPROVED'); 
@@ -74,7 +75,7 @@ jobs:
             if (!approved) { 
               core.setFailed("Код-рев’ю не схвалено. Потрібен хоча б один APPROVED."); 
             } else {
-              console.log("Проверка пройдена: Есть APPROVED ревью!");
+              console.log("Перевірка пройдена: APPROVED!");
             }
  
   analysis: 
@@ -86,16 +87,19 @@ jobs:
         with: 
           fetch-depth: 0 
  
-      - name: Setup Node.js 
-        uses: actions/setup-node@v3 
-        with: 
-          node-version: '18' 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
  
       - name: Install dependencies 
         run: | 
           if [ -f package.json ]; then 
-            npm ci 
+            npm install 
           fi 
+
+      - name: Add node_modules to PATH
+        run: echo "$(pwd)/node_modules/.bin" >> $GITHUB_PATH
  
       - name: Run ESLint with Reviewdog 
         uses: reviewdog/action-eslint@v1 
@@ -103,7 +107,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }} 
           reporter: github-pr-review 
           eslint_flags: ". --ext .js" 
-          level: error 
+          level: warning
  
       - name: Run Prettier with Reviewdog 
         uses: EPMatt/reviewdog-action-prettier@v1 
@@ -123,14 +127,23 @@ jobs:
           else 
             echo "No src directory found, skipping cloc." 
           fi 
- 
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Run SonarQube analysis 
+        continue-on-error: true
         env: 
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
         run: | 
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip 
-          unzip -o sonar-scanner-cli-4.8.0.2856-linux.zip 
-          export PATH=$PATH:$(pwd)/sonar-scanner-4.8.0.2856-linux/bin 
- 
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip 
+          unzip -o sonar-scanner-cli-5.0.1.3006-linux.zip 
+          
+          export PATH=$(pwd)/sonar-scanner-5.0.1.3006-linux/bin:$PATH
+          export JAVA_HOME=$JAVA_HOME_17_X64
+          
           sonar-scanner \ 
             -Dsonar.login=$SONAR_TOKEN

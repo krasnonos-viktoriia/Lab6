@@ -1,5 +1,4 @@
-// Selectors
-const toDoInput = document.querySelector(".todo-input");
+// Selectors 
 const toDoBtn = document.querySelector(".todo-btn");
 const toDoList = document.querySelector(".todo-list");
 const standardTheme = document.querySelector(".standard-theme");

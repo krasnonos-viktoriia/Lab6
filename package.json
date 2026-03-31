@@ -22,7 +22,9 @@
   },
   "homepage": "https://github.com/krasnonos-viktoriia/Lab6#readme",
   "devDependencies": {
+    "eslint": "^10.1.0",
     "jest": "^30.3.0",
-    "jest-environment-jsdom": "^30.3.0"
+    "jest-environment-jsdom": "^30.3.0",
+    "prettier": "^3.8.1"
   }
 }
