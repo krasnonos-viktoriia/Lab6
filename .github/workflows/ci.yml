@@ -43,7 +43,6 @@ jobs:
       - name: Run tests with coverage
         run: |
           if [ -f package.json ] && grep -q '"test"' package.json; then
-            # Убедись, что этот скрипт генерирует lcov.info в папке coverage
             npm run test:coverage || echo "Tests failed but continuing for analysis"
           else
             echo "No test script found, skipping tests."
@@ -57,7 +56,6 @@ jobs:
 
   review-check:
     runs-on: ubuntu-latest
-    # Запускаем проверку ревью ТОЛЬКО если это Pull Request
     if: github.event_name == 'pull_request'
     steps:
       - name: Check for approved code review
@@ -84,9 +82,7 @@ jobs:
 
   analysis:
     runs-on: ubuntu-latest
-    # Если это push, то review-check пропустится, и analysis начнется сразу после test
     needs: [test]
-    # Если это PR, то ждем еще и review-check
     if: always() && (needs.test.result == 'success')
     steps:
       - name: Checkout repository
