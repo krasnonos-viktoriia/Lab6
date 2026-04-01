@@ -34,7 +34,7 @@ jobs:
 
       - name: Lint JavaScript
         run: |
-          if [ -f package.json ] && ( [ -f .eslintrc ]  grep -q '"eslint"' package.json ); then
+          if [ -f package.json ] && ( [ -f .eslintrc ] || grep -q '"eslint"' package.json ); then
             npx eslint . --ext .js --max-warnings 0
           else
             echo "ESLint not configured, skipping JS linting."
@@ -44,7 +44,7 @@ jobs:
         run: |
           if [ -f package.json ] && grep -q '"test"' package.json; then
             # Убедись, что этот скрипт генерирует lcov.info в папке coverage
-            npm run test:coverage  echo "Tests failed but continuing for analysis"
+            npm run test:coverage || echo "Tests failed but continuing for analysis"
           else
             echo "No test script found, skipping tests."
           fi
@@ -71,8 +71,8 @@ jobs:
               pull_number: prNumber
             });
 
-            console.log(Found ${reviews.length} reviews);
-            reviews.forEach(r => console.log(- Author: ${r.user.login}, State: ${r.state}));
+            console.log(`Found ${reviews.length} reviews`);
+            reviews.forEach(r => console.log(`- Author: ${r.user.login}, State: ${r.state}`));
 
             const approved = reviews.some(review => review.state === 'APPROVED');
 
@@ -118,6 +118,6 @@ jobs:
             -Dsonar.projectKey=krasnonos-viktoriia_Lab6
             -Dsonar.organization=krasnonos-viktoriia
             -Dsonar.sources=.
-            -Dsonar.exclusions=/node_modules/,tests/**
+            -Dsonar.exclusions=**/node_modules/**,tests/**
             -Dsonar.tests=tests
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
