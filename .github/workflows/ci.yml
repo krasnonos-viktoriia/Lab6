@@ -1,5 +1,5 @@
-name: CI Pipeline
-
+name: CI Pipeline 
+ 
 on: 
   push:
     branches:
@@ -80,7 +80,15 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const prNumber = context.payload.pull_request.number;
+            // Проверяем, запущен ли пайплайн из Pull Request
+            const pr = context.payload.pull_request;
+            
+            if (!pr) {
+              console.log("Это не Pull Request (возможно, прямой push). Пропуск проверки ревью.");
+              return; 
+            }
+
+            const prNumber = pr.number;
             const { data: reviews } = await github.rest.pulls.listReviews({
               owner: context.repo.owner,
               repo: context.repo.repo,
