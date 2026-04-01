@@ -1,15 +1,15 @@
-import { defineConfig } from "eslint/config";
+const { defineConfig } = require("eslint/config");
 
-export default defineConfig([
+module.exports = defineConfig([
   {
-    // Ігнорувати папки, які не треба перевіряти
+    // Ігноруємо папки, які не треба перевіряти
     ignores: ["coverage/**", "node_modules/**"],
   },
   {
-    // Застосувати правила до всіх .js файлів
+    // Застосовуємо правила до всіх .js файлів
     files: ["**/*.js"],
     rules: {
-      // Тут можна додати ваші правила (якщо були в .eslintrc)
+      // Тут можна додати ваші правила (якщо вони були в .eslintrc)
       // Наприклад:
       // "no-unused-vars": "warn",
       // "semi": ["error", "always"],

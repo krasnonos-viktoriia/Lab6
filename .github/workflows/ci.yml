@@ -34,7 +34,7 @@ jobs:
 
       - name: Lint JavaScript
         run: |
-          if [ -f package.json ] && ( [ -f .eslintrc ] || grep -q '"eslint"' package.json ); then
+          if [ -f package.json ] && ( [ -f eslint.config.js ] || grep -q '"eslint"' package.json ); then
             npx eslint . --ext .js --max-warnings 0
           else
             echo "ESLint not configured, skipping JS linting."
