@@ -31,6 +31,7 @@
   },
 
     "jest": {
+    "testMatch": ["**/tests/**/*.js"],
     "collectCoverageFrom": ["src/**/*.js"],
     "coverageReporters": ["json-summary", "text", "lcov"]
   }
