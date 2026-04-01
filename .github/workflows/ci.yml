@@ -1,9 +1,13 @@
 name: CI Pipeline
 
-on:
-  pull_request:
-    types: [opened, edited, reopened, synchronize, review_requested, submitted]
+on: 
+  push:
     branches:
+      - master
+      - develop
+  pull_request: 
+    types: [opened, edited, reopened, synchronize, review_requested, submitted] 
+    branches: 
       - develop
       - master
 
