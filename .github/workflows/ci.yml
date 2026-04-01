@@ -135,18 +135,6 @@ jobs:
           name: coverage-report
           path: coverage/
 
-      - name: Verify lcov.info exists and show content
-        run: |
-          echo "=== Проверка coverage/ ==="
-          ls -la coverage/ || echo
-          echo "=== Первые 20 строк lcov.info ==="
-          if [ -f coverage/lcov.info ]; then
-            head -n 20 coverage/lcov.info
-          else
-            echo
-            exit 1
-          fi
-
       - name: Run ESLint with Reviewdog
         uses: reviewdog/action-eslint@v1
         with:
